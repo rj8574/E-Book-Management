@@ -1,6 +1,8 @@
 import createHttpError, { HttpError } from 'http-errors';
 import { Response, NextFunction, Request } from "express";
 import users from './userModel';
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const {name , email, password }=req.body
@@ -16,6 +18,8 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         return next(error)
         
     }
+   const hashpassword= bcrypt.hash(password, saltRounds)
+
 
   res.json({ message: "user registerd" });
 };
