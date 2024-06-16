@@ -1,7 +1,10 @@
-import createHttpError, { HttpError } from 'http-errors';
+import { config } from './../config/config';
+import { User } from './userTypes';
+import createHttpError from 'http-errors';
 import { Response, NextFunction, Request } from "express";
 import users from './userModel';
 const bcrypt = require('bcrypt');
+import jwt from 'jsonwebtoken'
 const saltRounds = 10;
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -18,10 +21,20 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         return next(error)
         
     }
-   const hashpassword= bcrypt.hash(password, saltRounds)
+   const hashpassword= await bcrypt.hash(password, saltRounds)
+   let newUser :User;
+    newUser = await users.create({
+    name,
+    email,
+    password:hashpassword
+    })
 
+    const token = jwt.sign({sub: newUser._id },config.jwtSecret as string, {       
+        expiresIn: "7d",
+        algorithm: "HS256" })
+        res.status(201).json({accesToken :token})
 
-  res.json({ message: "user registerd" });
+ 
 };
 
 export  { createUser };
