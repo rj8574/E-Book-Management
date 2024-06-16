@@ -14,25 +14,41 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         const error = createHttpError(400 ,"All fields are mandatory")
         return next(error)
     }
-   
+    try {
     if(email == await users.findOne({email:email}))
-    {
-        const error =createHttpError(400 ,"user already exist ");
-        return next(error)
-        
+        {
+            const error =createHttpError(400 ,"user already exist ");
+            return next(error)
+            
+        }
+    
+    } catch (error) {
+        return next(createHttpError(500 , "error while getting the user"))
     }
+   
    const hashpassword= await bcrypt.hash(password, saltRounds)
    let newUser :User;
+   try {
     newUser = await users.create({
-    name,
-    email,
-    password:hashpassword
-    })
-
+        name,
+        email,
+        password:hashpassword
+        })
+   } catch (error) {
+        return next(createHttpError(500 , "error while creating the user"))
+   }
+   try {
     const token = jwt.sign({sub: newUser._id },config.jwtSecret as string, {       
         expiresIn: "7d",
         algorithm: "HS256" })
         res.status(201).json({accesToken :token})
+    
+   } catch (error) {
+        return next(createHttpError(500, "error while signin the jwt token"))
+   }
+   
+
+    
 
  
 };
