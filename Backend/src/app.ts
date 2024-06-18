@@ -1,7 +1,8 @@
-import express, { Request, Response, NextFunction } from "express";
-import createHttpError, { HttpError } from "http-errors";
+import express from "express";
+import createHttpError  from "http-errors";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import userRouter from "./users/userRouter";
+import bookRouter from "./book/bookRouter";
 
 
 const app = express();
@@ -16,7 +17,9 @@ app.get("/", (req, res) => {
 });
 
 app.use('/api/users',userRouter)
+app.use('/api/',bookRouter)
 app.use(globalErrorHandler);
+
 
 
 export default app;

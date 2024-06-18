@@ -3,7 +3,7 @@ import { User } from './userTypes';
 import createHttpError from 'http-errors';
 import { Response, NextFunction, Request } from "express";
 import users from './userModel';
-const bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 const saltRounds = 10;
 
@@ -46,11 +46,34 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
    } catch (error) {
         return next(createHttpError(500, "error while signin the jwt token"))
    }
-   
-
-    
-
- 
 };
 
-export  { createUser };
+
+const loginUser = async(req: Request, res: Response, next: NextFunction)=>
+{
+    const {email,password} =req.body
+    if(!email || !password)
+    {
+        const error= createHttpError(400, "either email or password is missing");
+        next(error)   
+    }
+    const user= await users.findOne({email:email})
+    if(!user ){
+        return next(createHttpError(400 ,"User not found "))
+    }
+    const isMatch = await bcrypt.compare(password,user.password)
+    if(!isMatch){
+        return next(createHttpError(400 , "Username or password is missing"))
+    }
+
+    try {
+        const token = jwt.sign({sub: user._id },config.jwtSecret as string, {       
+            expiresIn: "7d",
+            algorithm: "HS256" })
+            res.status(201).json({accesToken :token})
+        
+       } catch (error) {
+            return next(createHttpError(500, "error while signin the jwt token"))
+       }
+}
+ export{ createUser ,loginUser};
