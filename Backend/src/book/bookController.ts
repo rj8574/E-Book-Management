@@ -4,6 +4,7 @@ import { Response, NextFunction, Request } from "express";
 import cloudinary from "../config/cloudinary";
 import createHttpError from "http-errors";
 import bookModel from "./bookModel";
+import { AuthRequest } from "../middlewares/authenticte";
 
 const createBook = async (req: Request, res: Response, next: NextFunction) => {
   const { title, genre } = req.body;
@@ -39,11 +40,18 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
         format: "pdf",
       }
     );
+    console.log("uploadResult", uploadResult);
+
+    console.log("bookFileUploadResult", bookFileUploadResult);
+     const _req = req as AuthRequest;
+  
+    console.log("userId", _req.userId);
+    
 
     const newBook = await bookModel.create({
       title,
       genre,
-      author: "666f0355bc4274a7868372b2",
+      author: _req.userId,
       coverImage: uploadResult.secure_url,
       file: bookFileUploadResult.secure_url,
     });
@@ -51,9 +59,7 @@ const createBook = async (req: Request, res: Response, next: NextFunction) => {
     await fs.promises.unlink(filePath);
     await fs.promises.unlink(bookFilePath);
 
-    console.log("uploadResult", uploadResult);
-
-    console.log("bookFileUploadResult", bookFileUploadResult);
+    
 
     res.status(201).json({ id: newBook._id });
   } catch (error) {
