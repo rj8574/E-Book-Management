@@ -105,8 +105,7 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
     const bookFileName = files.file[0].filename;
     const bookFilePath = path.resolve(
       __dirname,
-      "../../public/data/uploads/"+
-      bookFileName
+      "../../public/data/uploads/" + bookFileName
     );
     completeFileName = bookFileName;
     const bookFileUploadResult = await cloudinary.uploader.upload(
@@ -136,4 +135,14 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
   );
   res.json({ updatedBook });
 };
-export { createBook, updateBook };
+
+const listBook =async (req: Request, res: Response, next: NextFunction) =>{
+  try {
+    const book = await bookModel.find()
+    res.json(book)
+  } catch (error) {
+    return next(createHttpError(500,"error while getting a book"))
+    
+  }
+}
+export { createBook, updateBook ,listBook};
