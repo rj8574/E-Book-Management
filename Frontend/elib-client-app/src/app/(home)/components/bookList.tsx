@@ -1,6 +1,7 @@
-import { Book } from "../../../types";
+
 import React from "react";
 import BookCard from "./BookCard";
+import { Book } from "@/types";
 
 const BookList = async () => {
 

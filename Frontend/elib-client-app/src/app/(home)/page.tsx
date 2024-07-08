@@ -1,7 +1,7 @@
 import React, { Suspense } from "react"
 import Image from 'next/image';
 import Banner from "./components/Banner";
-import BookList from "./components/bookList";
+import BookList from "./components/BookList";
 import Loading from "@/components/Loading";
 
 
