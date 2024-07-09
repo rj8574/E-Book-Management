@@ -25,7 +25,7 @@ const SingleBookPage = async({params}:{params:{bookId :string}})=>{
             <div className="col-span-2 pr-16 text-primary-950">
                 <h2 className="mb-5 text-5xl font-bold leading-[1.1]">{book.title}</h2>
                 <span className="font-semibold">by {book.author.name}</span>
-                {/* <p className="mt-5 text-lg leading-8">{book.description}</p> */}
+                <p className="mt-5 text-lg leading-8">{book.description}</p> 
                 {/* <DownloadButton fileLink={book.file} /> */}
                 <DownloadButton fileLink={book.file}/>
             </div>
